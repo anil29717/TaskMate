@@ -13,10 +13,17 @@ const Home = () => {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userNote, setUserNote] = useState(() => {
+    return localStorage.getItem("userNote") || "";
+  });
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem("userNote", userNote);
+  }, [userNote]);
 
   const addTask = (taskData) => {
     const newTask = {
@@ -25,7 +32,7 @@ const Home = () => {
       date: taskData.date,
       completed: false,
     };
-    setTasks((prevTasks) => [newTask, ...prevTasks]); // Keep latest task first
+    setTasks((prevTasks) => [newTask, ...prevTasks]);
   };
 
   const completeTask = (taskId) => {
@@ -36,7 +43,6 @@ const Home = () => {
     );
   };
 
-  // Move a task back to uncompleted
   const uncompleteTask = (taskId) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
@@ -95,7 +101,17 @@ const Home = () => {
     <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
       <Header />
       <div className="container mx-auto mt-20 px-4 py-6">
-        {/* Button Group - Responsive Layout */}
+        <div className="mb-4 flex flex-col items-center">
+          <input
+            type="text"
+            value={userNote}
+            onChange={(e) => setUserNote(e.target.value)}
+            placeholder="Enter a note..."
+            className="w-full max-w-md p-2 text-center rounded-lg outline-none"
+          />
+          
+        </div>
+
         <div className="flex flex-wrap justify-center gap-4 mb-6">
           <button
             onClick={() => setIsModalOpen(true)}
@@ -131,8 +147,7 @@ const Home = () => {
           </button>
         </div>
 
-        {/* Task List */}
-        <div className=" sm:grid-cols-2  gap-4">
+        <div className="sm:grid-cols-2 gap-4">
           <TaskList
             tasks={tasks}
             onComplete={completeTask}
