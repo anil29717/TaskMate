@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {  Download, FileDown,  CirclePlus  } from "lucide-react";
+import { Download, FileDown, CirclePlus } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Header from "../components/Header";
@@ -36,31 +36,40 @@ const Home = () => {
     );
   };
 
+  // Move a task back to uncompleted
+  const uncompleteTask = (taskId) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: false } : task
+      )
+    );
+  };
+
   const deleteTask = (taskId) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
   const downloadTasksPDF = () => {
     const doc = new jsPDF();
-  
+
     doc.text("Task List", 14, 10);
-  
+
     const tableData = tasks.map((task, index) => [
       index + 1,
       task.title,
       task.date,
       task.completed ? "✔ Completed" : "❌ Not Completed",
     ]);
-  
+
     autoTable(doc, {
       head: [["#", "Task", "Date", "Status"]],
       body: tableData,
       startY: 20,
     });
-  
+
     doc.save("tasks.pdf");
   };
-  
+
   const uploadTasks = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -86,12 +95,13 @@ const Home = () => {
     <div className="min-h-screen bg-white dark:bg-gray-900 text-black dark:text-white">
       <Header />
       <div className="container mx-auto mt-20 px-4 py-6">
-        <div className="flex justify-center space-x-4 mb-6">
+        {/* Button Group - Responsive Layout */}
+        <div className="flex flex-wrap justify-center gap-4 mb-6">
           <button
             onClick={() => setIsModalOpen(true)}
             className="flex items-center space-x-2 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors group"
           >
-            <CirclePlus  className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+            <CirclePlus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
             <span>Add Task</span>
           </button>
 
@@ -121,7 +131,15 @@ const Home = () => {
           </button>
         </div>
 
-        <TaskList tasks={tasks} onComplete={completeTask} onDelete={deleteTask} />
+        {/* Task List */}
+        <div className=" sm:grid-cols-2  gap-4">
+          <TaskList
+            tasks={tasks}
+            onComplete={completeTask}
+            onDelete={deleteTask}
+            onUncomplete={uncompleteTask}
+          />
+        </div>
       </div>
 
       <TaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAddTask={addTask} />
