@@ -106,7 +106,7 @@ const Home = () => {
             type="text"
             value={userNote}
             onChange={(e) => setUserNote(e.target.value)}
-            placeholder="Enter a note..."
+            placeholder="Enter Your Name"
             className="w-full max-w-md p-2 text-center rounded-lg outline-none"
           />
           
